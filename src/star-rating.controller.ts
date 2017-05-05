@@ -32,7 +32,7 @@ export class StarRatingController implements ng.IComponentController, IStarRatin
 
     static DefaultStarType: starRatingStarTypes = "svg";
 
-    static DefaultAssetsPath: string = "assets/images/";
+    static DefaultAssetsPath: string = "img/";
 
     static DefaultSvgPath: string = StarRatingController.DefaultAssetsPath + "star-rating.icons.svg";
     static DefaultSvgEmptySymbolId: string = "star-empty";
@@ -71,7 +71,6 @@ export class StarRatingController implements ng.IComponentController, IStarRatin
      * @returns {boolean}
      */
     static _getHalfStarVisible(rating: number): boolean {
-        return Math.abs(rating % 1) > 0;
     }
 
     /**
@@ -94,22 +93,22 @@ export class StarRatingController implements ng.IComponentController, IStarRatin
             return staticColor;
         }
 
-        //calculate size of smallest fraction
-        let fractionSize = numOfStars / 3;
-
-        //apply color by fraction
-        let color: starRatingColors = 'default';
-        if (rating > 0) {
-            color = 'negative';
-        }
-        if (rating > fractionSize) {
-            color = 'ok';
-        }
-        if (rating > fractionSize * 2) {
-            color = 'positive';
-        }
-
-        return color;
+        // //calculate size of smallest fraction
+        // let fractionSize = numOfStars / 3;
+        //
+        // //apply color by fraction
+        // let color: starRatingColors = 'default';
+        // if (rating > 0) {
+        //     color = 'negative';
+        // }
+        // if (rating > fractionSize) {
+        //     color = 'ok';
+        // }
+        // if (rating > fractionSize * 2) {
+        //     color = 'positive';
+        // }
+        //
+        // return color;
     }
 
 
@@ -169,6 +168,7 @@ export class StarRatingController implements ng.IComponentController, IStarRatin
     }
 
     set rating(value: number) {
+
         if(value === undefined) {
             return
         }
@@ -190,7 +190,7 @@ export class StarRatingController implements ng.IComponentController, IStarRatin
         this.setHalfStarVisible();
 
         //update calculated Color
-        this.setColor();
+        //this.setColor();
 
         //fire onRatingChange event
         let $event:IStarRatingOnUpdateEvent = {rating: this._rating};
@@ -302,8 +302,11 @@ export class StarRatingController implements ng.IComponentController, IStarRatin
 
     getComponentClassNames():string {
         let classNames:string[] = [];
-
-        classNames.push(this.rating?'value-'+this.ratingAsInteger:'value-0');
+        if ((Math.abs(this.rating % 1)) > 0.75) {
+            classNames.push(this.rating?'value-'+Math.ceil(this.rating):'value-0');
+        }else {
+            classNames.push(this.rating?'value-'+this.ratingAsInteger:'value-0');
+        }
         classNames.push(this.showHoverStars?'hover':'');
         classNames.push(this.hoverRating?'hover-'+this.hoverRating:'hover-0');
         classNames.push(this.halfStarVisible?'half':'');
@@ -325,26 +328,17 @@ export class StarRatingController implements ng.IComponentController, IStarRatin
     }
 
     setColor() {
-        //check if custom function is given
-        if(typeof this.getColor === "function") {
-            this.color = this.getColor(this.rating, this.numOfStars, this.staticColor);
-        }
-        else {
-            this.color = StarRatingController._getColor(this.rating, this.numOfStars, this.staticColor);
-        }
+        this.color = this.staticColor
     }
 
     setHalfStarVisible() {
         //update halfStarVisible
         if(this.showHalfStars) {
 
-            //check if custom function is given
-            if(typeof this.getHalfStarVisible === "function") {
-                this.halfStarVisible = this.getHalfStarVisible(this.rating);
-            } else {
-                this.halfStarVisible = StarRatingController._getHalfStarVisible(this.rating);
-            }
-
+            var absDiff = (Math.abs(this.rating % 1));
+            if(absDiff >= 0.25 && absDiff <= 0.75) {
+                this.halfStarVisible = true;
+            }else this.halfStarVisible = false;
         }
         else {
             this.halfStarVisible = false;
