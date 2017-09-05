@@ -32,7 +32,7 @@ export class StarRatingController implements ng.IComponentController, IStarRatin
 
     static DefaultStarType: starRatingStarTypes = "svg";
 
-    static DefaultAssetsPath: string = "img/";
+    static DefaultAssetsPath: string = "assets/img/";
 
     static DefaultSvgPath: string = StarRatingController.DefaultAssetsPath + "star-rating.icons.svg";
     static DefaultSvgEmptySymbolId: string = "star-empty";
